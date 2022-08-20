@@ -1,24 +1,35 @@
 import logo from './logo.svg';
 import './App.css';
+import Header from './components/Layout/Header';
+import {Fragment, useState} from 'react';
+import Meals from './components/Meals/Meals';
+import Cart from './components/Cart/Cart';
+import CartProvider from './store/CartProvider';
+import Login from './components/UI/Login';
+import { useSelector } from 'react-redux';
+
 
 function App() {
+  const [cartIsShown, setIsCartShown] = useState(false);
+  const isAuth = useSelector(state => state.auth.isAuthenticated);
+  
+  const showCartHandler = () => {
+    setIsCartShown(true);
+  };
+
+  const hideCartHandler = () => {
+    setIsCartShown(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <CartProvider>
+     {isAuth && cartIsShown && <Cart onClose={hideCartHandler}/> }
+      <Header onShowCart={showCartHandler} isAuth={isAuth}/>
+      <main>
+        <Meals isAuth={isAuth}/>
+        {!isAuth && <Login></Login>}
+      </main>
+    </CartProvider>
   );
 }
 
